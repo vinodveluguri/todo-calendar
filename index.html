@@ -21,10 +21,20 @@ html,body{height:100%;font-family:'Segoe UI',system-ui,sans-serif;background:var
 /* ── App shell ── */
 #app{display:flex;flex-direction:column;height:100vh}
 
+/* ── Banner ── */
+#banner{
+  background:rgba(42,0,16,.95);border-bottom:1px solid var(--bdrh);
+  padding:.3rem 1rem;display:none;align-items:center;gap:.6rem;
+  font-size:.73rem;color:var(--rpale);flex-shrink:0;z-index:50;
+}
+#banner.on{display:flex}
+.ban-x{background:none;border:none;color:var(--txt3);cursor:pointer;margin-left:auto;font-size:.9rem;padding:.1rem .3rem}
+.ban-x:hover{color:var(--txt)}
+
 /* ── Header ── */
 #hdr{
   height:44px;background:var(--bg2);border-bottom:1px solid var(--bdr);
-  display:flex;align-items:center;gap:.7rem;padding:0 .9rem;flex-shrink:0;
+  display:flex;align-items:center;gap:.6rem;padding:0 .9rem;flex-shrink:0;
 }
 .app-title{display:flex;align-items:center;gap:.4rem;font-size:.95rem;font-weight:700;color:var(--rpale);white-space:nowrap}
 .app-title span{font-size:1rem}
@@ -32,6 +42,10 @@ html,body{height:100%;font-family:'Segoe UI',system-ui,sans-serif;background:var
 .prog-lbl{font-size:.68rem;color:var(--txt2)}
 .prog-bar{width:68px;height:4px;background:var(--bg3);border-radius:2px;overflow:hidden}
 .prog-fill{height:100%;background:linear-gradient(90deg,var(--rdim),var(--rose));border-radius:2px;transition:width .3s}
+.sync-dot{width:7px;height:7px;border-radius:50%;background:var(--txt3);flex-shrink:0;cursor:default;transition:background .3s}
+.sync-dot.ok{background:var(--low)}
+.sync-dot.err{background:var(--high)}
+.sync-dot.busy{background:var(--med);animation:blink 1s ease-in-out infinite}
 .fab{
   width:28px;height:28px;border-radius:50%;background:var(--rdim);border:none;
   color:#fff;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;
@@ -86,6 +100,7 @@ html,body{height:100%;font-family:'Segoe UI',system-ui,sans-serif;background:var
   font-weight:600;transition:all .12s;white-space:nowrap;font-family:inherit;
 }
 .btn:hover{border-color:var(--bdrh);color:var(--txt)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
 .btn-r{background:var(--rdim);border-color:var(--rose);color:#fff}
 .btn-r:hover{background:var(--rose)}
 .nav-sep{flex:1}
@@ -141,7 +156,7 @@ html,body{height:100%;font-family:'Segoe UI',system-ui,sans-serif;background:var
 /* ── Chips ── */
 .chip{
   border-radius:3px;padding:3px 5px 3px 7px;font-size:.75rem;font-weight:500;
-  background:rgba(255,255,255,.05);border-left:2.5px solid #555;
+  background:rgba(255,255,255,.055);border-left:2.5px solid #555;
   display:flex;align-items:center;gap:4px;cursor:pointer;
   white-space:nowrap;overflow:hidden;flex-shrink:0;
   transition:background .1s;position:relative;
@@ -170,7 +185,6 @@ html,body{height:100%;font-family:'Segoe UI',system-ui,sans-serif;background:var
   transition:transform .32s cubic-bezier(.4,0,.2,1),opacity .32s;
 }
 #dv.open{transform:translateX(0);opacity:1;pointer-events:all}
-
 .dv-nav{
   padding:.5rem .85rem;display:flex;align-items:center;gap:.7rem;
   border-bottom:1px solid var(--bdr);flex-shrink:0;background:var(--bg2);
@@ -180,9 +194,7 @@ html,body{height:100%;font-family:'Segoe UI',system-ui,sans-serif;background:var
 .dv-body{flex:1;overflow-y:auto;padding:.75rem}
 .dv-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:.6rem;color:var(--txt3)}
 .dv-empty .ico{font-size:2.4rem}
-.dv-empty p{font-size:.82rem}
-
-/* Day view task cards */
+.dv-empty p{font-size:.82rem;text-align:center}
 .dv-card{
   background:var(--bg2);border:1px solid var(--bdr);border-radius:var(--r);
   padding:.7rem .85rem;margin-bottom:.5rem;border-left:3px solid #555;
@@ -239,7 +251,7 @@ html,body{height:100%;font-family:'Segoe UI',system-ui,sans-serif;background:var
 .bbl{background:rgba(59,130,246,.1);border-color:rgba(59,130,246,.4);color:#60a5fa}
 .bbl:hover{background:rgba(59,130,246,.2)}
 
-/* ── Modal ── */
+/* ── Task Modal ── */
 #back{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:400;display:none;align-items:center;justify-content:center;padding:1rem}
 #back.on{display:flex}
 .modal{background:var(--bg2);border:1px solid var(--bdrh);border-radius:var(--r);width:100%;max-width:440px;box-shadow:0 12px 40px rgba(0,0,0,.75);animation:su .17s ease}
@@ -251,7 +263,7 @@ html,body{height:100%;font-family:'Segoe UI',system-ui,sans-serif;background:var
 .m-body{padding:.8rem 1rem;display:flex;flex-direction:column;gap:.58rem}
 .m-foot{padding:.55rem 1rem .8rem;display:flex;gap:.4rem;justify-content:flex-end}
 label{font-size:.69rem;font-weight:600;color:var(--txt2);display:block;margin-bottom:.18rem}
-input[type=text],input[type=date],input[type=time],input[type=number],select,textarea{
+input[type=text],input[type=date],input[type=time],input[type=number],input[type=password],select,textarea{
   width:100%;background:var(--bg3);border:1px solid var(--bdr);border-radius:var(--rs);
   color:var(--txt);padding:.4rem .55rem;font-size:.77rem;font-family:inherit;outline:none;transition:border-color .12s;
 }
@@ -263,6 +275,50 @@ select option{background:var(--bg2)}
 .fr2{display:grid;grid-template-columns:1fr 1fr;gap:.48rem}
 .fr3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.48rem}
 #customRepeatRow{display:none}
+
+/* ── Setup Modal ── */
+#setupBack{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:450;display:none;align-items:center;justify-content:center;padding:1rem}
+#setupBack.on{display:flex}
+.setup-modal{background:var(--bg2);border:1px solid var(--bdrh);border-radius:var(--r);width:100%;max-width:520px;box-shadow:0 12px 40px rgba(0,0,0,.8);animation:su .17s ease;max-height:90vh;display:flex;flex-direction:column}
+.setup-modal .m-body{overflow-y:auto;flex:1}
+
+details{border:1px solid var(--bdr);border-radius:var(--rs);overflow:hidden}
+summary{
+  padding:.45rem .7rem;cursor:pointer;font-size:.73rem;font-weight:600;
+  color:var(--txt2);background:var(--bg3);
+  display:flex;align-items:center;gap:.4rem;list-style:none;
+}
+summary::-webkit-details-marker{display:none}
+summary::before{content:'▶';font-size:.55rem;transition:transform .15s;flex-shrink:0}
+details[open] summary::before{transform:rotate(90deg)}
+.det-inner{padding:.65rem .75rem;display:flex;flex-direction:column;gap:.45rem}
+
+.schema-table{width:100%;border-collapse:collapse;font-size:.63rem}
+.schema-table th{text-align:left;color:var(--txt2);border-bottom:1px solid var(--bdr);padding:.22rem .35rem;font-weight:600}
+.schema-table td{padding:.18rem .35rem;border-bottom:1px solid rgba(54,0,32,.5)}
+.schema-table tr:last-child td{border-bottom:none}
+.sc-f{color:var(--rpale);font-family:monospace;font-weight:600}
+.sc-t{color:var(--pers)}
+.sc-n{color:var(--txt3)}
+
+.test-result{
+  font-size:.71rem;padding:.3rem .5rem;border-radius:var(--rs);
+  margin-top:.3rem;display:none;
+}
+.test-ok{background:rgba(34,197,94,.1);color:#22c55e;border:1px solid rgba(34,197,94,.3);display:block}
+.test-err{background:rgba(239,68,68,.1);color:#ef4444;border:1px solid rgba(239,68,68,.3);display:block}
+
+/* ── Loading Overlay ── */
+#loader{
+  position:fixed;inset:0;background:rgba(13,0,8,.92);
+  z-index:500;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.9rem;
+}
+#loader.off{display:none}
+.spin{
+  width:30px;height:30px;border:3px solid var(--bdr);border-top-color:var(--rose);
+  border-radius:50%;animation:spin .65s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
 
 /* ── Snack ── */
 #snk{
@@ -287,6 +343,12 @@ select option{background:var(--bg2)}
 <body>
 <div id="app">
 
+  <!-- Offline/Error Banner -->
+  <div id="banner">
+    <span id="bannerMsg"></span>
+    <button class="ban-x" onclick="hideBanner()">✕</button>
+  </div>
+
   <!-- Header -->
   <div id="hdr">
     <div class="app-title"><span>📅</span> Calendar To-Do</div>
@@ -294,6 +356,8 @@ select option{background:var(--bg2)}
       <span class="prog-lbl" id="progLbl">0/0</span>
       <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
     </div>
+    <span id="syncDot" class="sync-dot" title="Not connected"></span>
+    <button class="btn" style="font-size:.8rem;padding:.25rem .5rem" onclick="openSetup(false)" title="Airtable settings">⚙</button>
     <button class="fab" onclick="openAdd(null)" title="Add task">+</button>
   </div>
 
@@ -328,13 +392,12 @@ select option{background:var(--bg2)}
           </div>
         </div>
 
-        <!-- Filter Row -->
         <div id="filterRow">
           <span class="filter-lbl">Filter:</span>
-          <button class="fpill on" data-f="all"    onclick="setFilter(this)">All</button>
-          <button class="fpill f-hi" data-f="high"  onclick="setFilter(this)">🔴 High</button>
-          <button class="fpill f-md" data-f="med"   onclick="setFilter(this)">🟡 Medium</button>
-          <button class="fpill f-lo" data-f="low"   onclick="setFilter(this)">🟢 Low</button>
+          <button class="fpill on" data-f="all"   onclick="setFilter(this)">All</button>
+          <button class="fpill f-hi" data-f="high" onclick="setFilter(this)">🔴 High</button>
+          <button class="fpill f-md" data-f="med"  onclick="setFilter(this)">🟡 Medium</button>
+          <button class="fpill f-lo" data-f="low"  onclick="setFilter(this)">🟢 Low</button>
         </div>
 
         <div id="dayNames">
@@ -350,16 +413,16 @@ select option{background:var(--bg2)}
           <button class="btn" onclick="closeDayView()">← Calendar</button>
           <div style="flex:1;min-width:0">
             <div class="dv-title" id="dvTitle"></div>
-            <div class="dv-hint">Double-click a day to return</div>
+            <div class="dv-hint">Double-click calendar to return</div>
           </div>
           <button class="btn btn-r" onclick="openAdd(dvDate)">+ Add Task</button>
         </div>
         <div class="dv-body" id="dvBody"></div>
       </div>
 
-    </div><!-- /main -->
-  </div><!-- /body -->
-</div><!-- /app -->
+    </div>
+  </div>
+</div>
 
 <!-- Detail Panel -->
 <div id="det">
@@ -371,7 +434,7 @@ select option{background:var(--bg2)}
   <div class="det-foot" id="detFoot"></div>
 </div>
 
-<!-- Modal -->
+<!-- Task Modal -->
 <div id="back" onclick="backClick(event)">
   <div class="modal">
     <div class="m-hdr"><span class="m-tit" id="mTit">Add Task</span><button class="m-x" onclick="closeMod()">✕</button></div>
@@ -382,25 +445,13 @@ select option{background:var(--bg2)}
         <div><label>Time</label><input type="time" id="fTm"/></div>
       </div>
       <div class="fr3">
-        <div>
-          <label>Priority</label>
-          <select id="fPri">
-            <option value="med">Medium</option>
-            <option value="high">High</option>
-            <option value="low">Low</option>
-          </select>
+        <div><label>Priority</label>
+          <select id="fPri"><option value="med">Medium</option><option value="high">High</option><option value="low">Low</option></select>
         </div>
-        <div>
-          <label>Tag</label>
-          <select id="fTag">
-            <option value="Work">Work</option>
-            <option value="Personal">Personal</option>
-            <option value="Health">Health</option>
-            <option value="Other">Other</option>
-          </select>
+        <div><label>Tag</label>
+          <select id="fTag"><option value="Work">Work</option><option value="Personal">Personal</option><option value="Health">Health</option><option value="Other">Other</option></select>
         </div>
-        <div>
-          <label>Repeat</label>
+        <div><label>Repeat</label>
           <select id="fRep" onchange="onRepeatChange()">
             <option value="none">None</option>
             <option value="daily">Daily</option>
@@ -413,7 +464,6 @@ select option{background:var(--bg2)}
           </select>
         </div>
       </div>
-      <!-- Extra repeat fields (shown dynamically) -->
       <div id="customRepeatRow">
         <div id="domRow" style="display:none">
           <label>Repeat on day of month (1–28)</label>
@@ -428,21 +478,77 @@ select option{background:var(--bg2)}
     </div>
     <div class="m-foot">
       <button class="btn" onclick="closeMod()">Cancel</button>
-      <button class="btn btn-r" onclick="saveTask()">Save Task</button>
+      <button class="btn btn-r" id="saveBtn" onclick="saveTask()">Save Task</button>
     </div>
   </div>
+</div>
+
+<!-- Setup / Settings Modal -->
+<div id="setupBack" onclick="setupBkClick(event)">
+  <div class="setup-modal">
+    <div class="m-hdr">
+      <span class="m-tit">⚙ Connect to Airtable</span>
+      <button class="m-x" id="setupClose" onclick="closeSetup()">✕</button>
+    </div>
+    <div class="m-body">
+      <details>
+        <summary>📋 Required Airtable Table Schema — click to expand</summary>
+        <div class="det-inner">
+          <p style="font-size:.69rem;color:var(--txt2)">
+            Create a base named <b style="color:var(--rpale)">TodoCalendar</b>, add a table named <b style="color:var(--rpale)">Tasks</b>, and add exactly these fields:
+          </p>
+          <table class="schema-table">
+            <tr><th>Field Name</th><th>Airtable Type</th><th>Notes</th></tr>
+            <tr><td class="sc-f">title</td><td class="sc-t">Single line text</td><td class="sc-n">Required</td></tr>
+            <tr><td class="sc-f">date</td><td class="sc-t">Single line text</td><td class="sc-n">YYYY-MM-DD</td></tr>
+            <tr><td class="sc-f">time</td><td class="sc-t">Single line text</td><td class="sc-n">HH:MM, optional</td></tr>
+            <tr><td class="sc-f">priority</td><td class="sc-t">Single line text</td><td class="sc-n">high / med / low</td></tr>
+            <tr><td class="sc-f">tag</td><td class="sc-t">Single line text</td><td class="sc-n">Work / Personal / Health / Other</td></tr>
+            <tr><td class="sc-f">repeat</td><td class="sc-t">Single line text</td><td class="sc-n">none / daily / weekly / fortnightly / monthly / yearly / dom / custom</td></tr>
+            <tr><td class="sc-f">notes</td><td class="sc-t">Long text</td><td class="sc-n">Optional</td></tr>
+            <tr><td class="sc-f">done</td><td class="sc-t">Checkbox</td><td class="sc-n">Boolean</td></tr>
+            <tr><td class="sc-f">customDay</td><td class="sc-t">Number</td><td class="sc-n">Day-of-month repeat (1–28)</td></tr>
+            <tr><td class="sc-f">customN</td><td class="sc-t">Number</td><td class="sc-n">Every-N-days repeat interval</td></tr>
+          </table>
+          <p style="font-size:.65rem;color:var(--txt3)">
+            Get your token at <b>airtable.com/create/tokens</b> with scopes: <b>data.records:read</b> and <b>data.records:write</b>
+          </p>
+        </div>
+      </details>
+      <div>
+        <label>Base ID <span style="color:var(--txt3);font-weight:400">(from your Airtable base URL)</span></label>
+        <input type="text" id="cfgBase" placeholder="appXXXXXXXXXXXXXX" autocomplete="off" spellcheck="false"/>
+      </div>
+      <div>
+        <label>Personal Access Token</label>
+        <input type="password" id="cfgToken" placeholder="patXXXXXXXXXXXXXX" autocomplete="off"/>
+      </div>
+      <div>
+        <label>Table Name</label>
+        <input type="text" id="cfgTable" placeholder="Tasks" value="Tasks"/>
+      </div>
+      <div>
+        <button class="btn" style="width:100%" onclick="testConn()">🔌 Test Connection</button>
+        <div id="testResult" class="test-result"></div>
+      </div>
+    </div>
+    <div class="m-foot" style="justify-content:space-between">
+      <button class="btn" id="offlineBtn" onclick="useOffline()">Use Offline</button>
+      <button class="btn btn-r" onclick="saveCreds()">Save &amp; Connect</button>
+    </div>
+  </div>
+</div>
+
+<!-- Loading Overlay -->
+<div id="loader" class="off">
+  <div class="spin"></div>
+  <div style="font-size:.8rem;color:var(--txt2)">Loading from Airtable…</div>
 </div>
 
 <div id="snk"></div>
 
 <script>
-// ── State ──────────────────────────────────────────
-let tasks  = JSON.parse(localStorage.getItem('ctm4')||'[]');
-let vY, vM;
-let editId = null, detId = null, dragId = null;
-let filterPri = 'all';
-let dvDate = null; // currently open day view date
-
+// ── Constants ──────────────────────────────────────────
 const TODAY = todayStr();
 const PC = {high:'#ef4444',med:'#f59e0b',low:'#22c55e'};
 const TC = {Work:'#3b82f6',Personal:'#06b6d4',Health:'#ec4899',Other:'#f97316'};
@@ -450,11 +556,20 @@ const PL = {high:'High',med:'Medium',low:'Low'};
 const PB = {high:'bhi',med:'bmd',low:'blo'};
 const RL = {daily:'Daily',weekly:'Weekly',fortnightly:'Fortnightly',monthly:'Monthly',yearly:'Yearly',dom:'Day of month',custom:'Custom'};
 
+// ── State ──────────────────────────────────────────────
+let tasks = [];
+let vY, vM;
+let editId = null, detId = null, dragId = null;
+let filterPri = 'all';
+let dvDate = null;
+let cfg = null;
+let firstRun = false;
+
+// ── Helpers ────────────────────────────────────────────
 function todayStr(){ return new Date().toISOString().slice(0,10) }
 function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,6) }
-function save(){ localStorage.setItem('ctm4',JSON.stringify(tasks)) }
+function saveLocal(){ localStorage.setItem('ctm4',JSON.stringify(tasks)) }
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') }
-
 function fmtDate(s){
   if(!s) return '';
   const [y,m,d]=s.split('-').map(Number);
@@ -477,11 +592,187 @@ function dlabel(s){
   return fmtDateShort(s);
 }
 
-// ── Repeat logic ────────────────────────────────────
-function matchesRepeat(t, ds){
-  if(!t.repeat || t.repeat==='none' || t.date>=ds) return false;
-  const o=new Date(t.date+'T00:00:00');
-  const c=new Date(ds+'T00:00:00');
+// ── Config ─────────────────────────────────────────────
+function loadCfg(){
+  try{ cfg=JSON.parse(localStorage.getItem('ctm_at'))||null; } catch(e){ cfg=null; }
+}
+function hasCfg(){ return !!(cfg&&cfg.baseId&&cfg.token&&cfg.table) }
+
+// ── Airtable API ───────────────────────────────────────
+function atUrl(sfx){ return `https://api.airtable.com/v0/${cfg.baseId}/${encodeURIComponent(cfg.table)}${sfx||''}` }
+function atH(){ return {'Authorization':`Bearer ${cfg.token}`,'Content-Type':'application/json'} }
+
+function mapRec(r){
+  const f=r.fields||{};
+  return {
+    id:r.id, title:f.title||'', date:f.date||'', time:f.time||'',
+    priority:f.priority||'med', tag:f.tag||'Work', repeat:f.repeat||'none',
+    customDay:f.customDay||null, customN:f.customN||null,
+    notes:f.notes||'', done:!!f.done,
+  };
+}
+function toFields(t){
+  const f={
+    title:t.title||'', date:t.date||'', time:t.time||'',
+    priority:t.priority||'med', tag:t.tag||'Work',
+    repeat:t.repeat||'none', notes:t.notes||'', done:!!t.done,
+  };
+  if(t.customDay!=null) f.customDay=t.customDay;
+  if(t.customN!=null)   f.customN=t.customN;
+  return f;
+}
+
+async function fetchAllTasks(){
+  let all=[],offset=null;
+  do{
+    const url=atUrl(offset?`?offset=${offset}`:'');
+    const res=await fetch(url,{headers:atH()});
+    if(res.status===401) throw new Error('401 Unauthorized');
+    if(res.status===429) throw new Error('429 Rate limited');
+    if(!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data=await res.json();
+    all=[...all,...data.records.map(mapRec)];
+    offset=data.offset||null;
+  } while(offset);
+  return all;
+}
+
+async function apiCreate(d){
+  const res=await fetch(atUrl(),{method:'POST',headers:atH(),body:JSON.stringify({records:[{fields:toFields(d)}]})});
+  if(!res.ok) throw new Error(`HTTP ${res.status}`);
+  const data=await res.json();
+  return mapRec(data.records[0]);
+}
+
+async function apiPatch(id,changes){
+  const res=await fetch(atUrl(),{method:'PATCH',headers:atH(),body:JSON.stringify({records:[{id,fields:changes}]})});
+  if(!res.ok) throw new Error(`HTTP ${res.status}`);
+}
+
+async function apiDel(id){
+  const res=await fetch(atUrl(`?records[]=${id}`),{method:'DELETE',headers:atH()});
+  if(!res.ok) throw new Error(`HTTP ${res.status}`);
+}
+
+// ── Safe fetch with error handling ────────────────────
+async function sf(fn){
+  setSyncDot('busy');
+  try{
+    const r=await fn();
+    setSyncDot('ok');
+    return r;
+  } catch(err){
+    setSyncDot('err');
+    const m=err.message||'';
+    const msg=m.includes('401')?'⚠ Invalid token — open ⚙ to update credentials'
+             :m.includes('429')?'⚠ Rate limited — please wait and try again'
+             :!navigator.onLine?'⚠ Offline — changes saved locally'
+             :'⚠ Sync failed — changes saved locally';
+    showBanner(msg);
+    console.error('Airtable:',err);
+    return null;
+  }
+}
+
+// ── Sync dot ───────────────────────────────────────────
+function setSyncDot(s){
+  const d=document.getElementById('syncDot'); if(!d) return;
+  d.className='sync-dot'+(s==='ok'?' ok':s==='busy'?' busy':s==='err'?' err':'');
+  d.title=s==='ok'?'Synced':s==='busy'?'Syncing…':s==='err'?'Sync error — click ⚙ to check credentials':'Not connected';
+}
+
+// ── Banner ─────────────────────────────────────────────
+let banT;
+function showBanner(msg,auto=false){
+  document.getElementById('bannerMsg').textContent=msg;
+  document.getElementById('banner').classList.add('on');
+  if(auto){ clearTimeout(banT); banT=setTimeout(hideBanner,4500); }
+}
+function hideBanner(){ document.getElementById('banner').classList.remove('on') }
+
+// ── Online/Offline ─────────────────────────────────────
+window.addEventListener('offline',()=>showBanner('⚠ You are offline — changes will be saved locally'));
+window.addEventListener('online',()=>{ hideBanner(); if(hasCfg()) syncFromAirtable(false); });
+
+// ── Loading overlay ────────────────────────────────────
+function setLoading(v){ document.getElementById('loader').classList.toggle('off',!v) }
+
+// ── Setup Modal ────────────────────────────────────────
+function openSetup(fr){
+  firstRun=fr;
+  if(cfg){
+    document.getElementById('cfgBase').value=cfg.baseId||'';
+    document.getElementById('cfgToken').value=cfg.token||'';
+    document.getElementById('cfgTable').value=cfg.table||'Tasks';
+  }
+  document.getElementById('setupClose').style.display=fr?'none':'block';
+  document.getElementById('offlineBtn').style.display=fr?'block':'none';
+  document.getElementById('testResult').className='test-result';
+  document.getElementById('testResult').style.display='none';
+  document.getElementById('setupBack').classList.add('on');
+}
+function closeSetup(){
+  if(firstRun) return;
+  document.getElementById('setupBack').classList.remove('on');
+}
+function setupBkClick(e){ if(e.target.id==='setupBack'&&!firstRun) closeSetup() }
+function useOffline(){
+  document.getElementById('setupBack').classList.remove('on');
+  firstRun=false;
+}
+
+async function testConn(){
+  const baseId=document.getElementById('cfgBase').value.trim();
+  const token=document.getElementById('cfgToken').value.trim();
+  const table=(document.getElementById('cfgTable').value.trim())||'Tasks';
+  const el=document.getElementById('testResult');
+  el.className='test-result'; el.style.display='block'; el.textContent='Testing…';
+  try{
+    const res=await fetch(`https://api.airtable.com/v0/${baseId}/${encodeURIComponent(table)}?maxRecords=1`,
+      {headers:{Authorization:`Bearer ${token}`}});
+    if(res.status===401) throw new Error('Invalid token — check your Personal Access Token');
+    if(res.status===403) throw new Error('Forbidden — check token scopes (need data.records:read)');
+    if(res.status===404) throw new Error('Base or table not found — check Base ID and table name');
+    if(!res.ok) throw new Error(`HTTP ${res.status}`);
+    el.className='test-result test-ok'; el.textContent='✓ Connection successful!';
+  } catch(err){
+    el.className='test-result test-err'; el.textContent='✗ '+err.message;
+  }
+}
+
+function saveCreds(){
+  const baseId=document.getElementById('cfgBase').value.trim();
+  const token=document.getElementById('cfgToken').value.trim();
+  const table=(document.getElementById('cfgTable').value.trim())||'Tasks';
+  const el=document.getElementById('testResult');
+  if(!baseId||!token){
+    el.className='test-result test-err'; el.style.display='block';
+    el.textContent='Base ID and Access Token are required'; return;
+  }
+  cfg={baseId,token,table};
+  localStorage.setItem('ctm_at',JSON.stringify(cfg));
+  document.getElementById('setupBack').classList.remove('on');
+  firstRun=false;
+  syncFromAirtable(true);
+}
+
+// ── Sync from Airtable ─────────────────────────────────
+async function syncFromAirtable(showSpinner=false){
+  if(!hasCfg()) return;
+  if(showSpinner) setLoading(true);
+  const fetched=await sf(()=>fetchAllTasks());
+  if(fetched!==null){
+    tasks=fetched;
+    saveLocal();
+  }
+  if(showSpinner) setLoading(false);
+  render();
+}
+
+// ── Repeat logic ───────────────────────────────────────
+function matchesRepeat(t,ds){
+  if(!t.repeat||t.repeat==='none'||t.date>=ds) return false;
+  const o=new Date(t.date+'T00:00:00'), c=new Date(ds+'T00:00:00');
   const diff=Math.round((c-o)/86400000);
   if(diff<=0) return false;
   switch(t.repeat){
@@ -491,7 +782,7 @@ function matchesRepeat(t, ds){
     case 'monthly':     return c.getDate()===o.getDate();
     case 'yearly':      return c.getDate()===o.getDate()&&c.getMonth()===o.getMonth();
     case 'dom':         return c.getDate()===(t.customDay||o.getDate());
-    case 'custom':      return (t.customN&&t.customN>0)?diff%t.customN===0:false;
+    case 'custom':      return t.customN>0?diff%t.customN===0:false;
     default: return false;
   }
 }
@@ -502,8 +793,7 @@ function tasksForDate(ds){
     if(t.date===ds){ out.push({...t,_v:false}); return; }
     if(matchesRepeat(t,ds)) out.push({...t,date:ds,_v:true});
   });
-  // apply priority filter
-  const filtered = filterPri==='all' ? out : out.filter(x=>x.priority===filterPri);
+  const filtered=filterPri==='all'?out:out.filter(x=>x.priority===filterPri);
   filtered.sort((a,b)=>{
     if(a.time&&b.time) return a.time.localeCompare(b.time);
     if(a.time) return -1; if(b.time) return 1; return 0;
@@ -511,11 +801,22 @@ function tasksForDate(ds){
   return filtered;
 }
 
-// ── Init & Render ───────────────────────────────────
-function init(){
+// ── Init ───────────────────────────────────────────────
+async function init(){
+  loadCfg();
   const n=new Date(); vY=n.getFullYear(); vM=n.getMonth();
+  // Render from localStorage immediately (instant UI)
+  tasks=JSON.parse(localStorage.getItem('ctm4')||'[]');
   render();
+  if(!hasCfg()){
+    openSetup(true);
+    return;
+  }
+  // Background fetch from Airtable
+  await syncFromAirtable(true);
 }
+
+// ── Render ─────────────────────────────────────────────
 function nav(d){ vM+=d; if(vM>11){vM=0;vY++} if(vM<0){vM=11;vY--} render() }
 function goToday(){ const n=new Date(); vY=n.getFullYear(); vM=n.getMonth(); render() }
 function render(){ renderHdr(); renderGrid(); renderAgenda() }
@@ -543,12 +844,12 @@ function renderGrid(){
     else { day=i-first+1; mo=vM; yr=vY }
     const ds=`${yr}-${String(mo+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
     const isToday=ds===TODAY;
-    let cls='dc'+(other?' om':'')+(isToday?' tod':'');
+    const cls='dc'+(other?' om':'')+(isToday?' tod':'');
     const dt=tasksForDate(ds);
     const MAX=4, shown=dt.slice(0,MAX), extra=dt.length-MAX;
     const chips=shown.map(t=>{
       const ov=!t.done&&t.date<TODAY?' ov':'';
-      const drag=!t._v?`draggable="true" ondragstart="dstart(event,'${t.id}')"`:' ';
+      const drag=!t._v?`draggable="true" ondragstart="dstart(event,'${t.id}')"`:'';
       return `<div class="chip${t.done?' done':''}${ov}"
         style="border-left-color:${PC[t.priority]||PC.med}"
         onclick="event.stopPropagation();openDet('${t.id}')"
@@ -571,7 +872,6 @@ function renderGrid(){
   grid.innerHTML=html;
 }
 
-// ── Agenda ──────────────────────────────────────────
 function renderAgenda(){
   const al=document.getElementById('agList');
   let html='';
@@ -594,9 +894,7 @@ function renderAgenda(){
 
 function agI(t,meta){
   const p=t.priority||'med';
-  return `<div class="ag-item${t.done?' done':''}"
-    style="border-left-color:${PC[p]}"
-    onclick="openDet('${t.id}')">
+  return `<div class="ag-item${t.done?' done':''}" style="border-left-color:${PC[p]}" onclick="openDet('${t.id}')">
     <div class="ag-t">${esc(t.title)}</div>
     <div class="ag-m">
       <span class="chdot" style="background:${TC[t.tag]||TC.Other}"></span>
@@ -606,12 +904,11 @@ function agI(t,meta){
   </div>`;
 }
 
-// ── Cell click → add task ───────────────────────────
+// ── Cell click / Day view ──────────────────────────────
 function cellClick(ds){ openAdd(ds) }
 
-// ── Day View ────────────────────────────────────────
 function openDayView(ds){
-  dvDate = ds;
+  dvDate=ds;
   const d=new Date(ds+'T00:00:00');
   document.getElementById('dvTitle').textContent=
     d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
@@ -619,7 +916,6 @@ function openDayView(ds){
   document.getElementById('mv').classList.add('slide-out');
   document.getElementById('dv').classList.add('open');
 }
-
 function renderDayView(){
   if(!dvDate) return;
   const dt=tasksForDate(dvDate);
@@ -653,20 +949,18 @@ function renderDayView(){
     </div>`;
   }).join('');
 }
-
 function closeDayView(){
   document.getElementById('mv').classList.remove('slide-out');
   document.getElementById('dv').classList.remove('open');
   dvDate=null;
 }
-
-function dvDel(id){
+async function dvDel(id){
   if(!confirm('Delete this task?')) return;
-  tasks=tasks.filter(t=>t.id!==id);
-  save(); render(); renderDayView(); snack('Task deleted');
+  tasks=tasks.filter(t=>t.id!==id); saveLocal(); render(); renderDayView(); snack('Task deleted');
+  if(hasCfg()&&!id.startsWith('tmp_')) await sf(()=>apiDel(id));
 }
 
-// ── Priority Filter ─────────────────────────────────
+// ── Priority filter ────────────────────────────────────
 function setFilter(el){
   filterPri=el.dataset.f;
   document.querySelectorAll('.fpill').forEach(p=>p.classList.remove('on'));
@@ -675,23 +969,20 @@ function setFilter(el){
   if(dvDate) renderDayView();
 }
 
-// ── Modal ───────────────────────────────────────────
+// ── Repeat field toggle ────────────────────────────────
 function onRepeatChange(){
   const v=document.getElementById('fRep').value;
   const cr=document.getElementById('customRepeatRow');
-  const domR=document.getElementById('domRow');
-  const nR=document.getElementById('nRow');
+  const dr=document.getElementById('domRow');
+  const nr=document.getElementById('nRow');
   if(v==='dom'||v==='custom'){
     cr.style.display='block';
-    domR.style.display=v==='dom'?'block':'none';
-    nR.style.display=v==='custom'?'block':'none';
-  } else {
-    cr.style.display='none';
-    domR.style.display='none';
-    nR.style.display='none';
-  }
+    dr.style.display=v==='dom'?'block':'none';
+    nr.style.display=v==='custom'?'block':'none';
+  } else { cr.style.display='none'; dr.style.display='none'; nr.style.display='none'; }
 }
 
+// ── Task Modal ─────────────────────────────────────────
 function openAdd(ds){
   editId=null;
   document.getElementById('mTit').textContent='Add Task';
@@ -708,7 +999,6 @@ function openAdd(ds){
   document.getElementById('back').classList.add('on');
   setTimeout(()=>document.getElementById('fTit').focus(),80);
 }
-
 function openEdit(id){
   const t=tasks.find(x=>x.id===id); if(!t) return;
   editId=id;
@@ -726,38 +1016,50 @@ function openEdit(id){
   document.getElementById('back').classList.add('on');
   setTimeout(()=>document.getElementById('fTit').focus(),80);
 }
-
 function closeMod(){ document.getElementById('back').classList.remove('on'); editId=null }
 function backClick(e){ if(e.target.id==='back') closeMod() }
 
-function saveTask(){
+async function saveTask(){
   const title=document.getElementById('fTit').value.trim();
   if(!title){ document.getElementById('fTit').focus(); return }
   const rep=document.getElementById('fRep').value;
   const d={
-    title,
-    date:document.getElementById('fDt').value,
-    time:document.getElementById('fTm').value,
-    priority:document.getElementById('fPri').value,
-    tag:document.getElementById('fTag').value,
+    title, date:document.getElementById('fDt').value, time:document.getElementById('fTm').value,
+    priority:document.getElementById('fPri').value, tag:document.getElementById('fTag').value,
     repeat:rep,
     customDay:rep==='dom'?parseInt(document.getElementById('fDom').value)||1:null,
     customN:rep==='custom'?parseInt(document.getElementById('fN').value)||14:null,
     notes:document.getElementById('fNot').value.trim()
   };
+
   if(editId){
+    // Optimistic update
     Object.assign(tasks.find(t=>t.id===editId),d);
+    saveLocal(); closeMod(); render();
+    if(dvDate) renderDayView();
+    if(detId) renderDet(detId);
     snack('Task updated');
+    // Background sync
+    if(hasCfg()) await sf(()=>apiPatch(editId,toFields({...tasks.find(t=>t.id===editId)})));
   } else {
-    tasks.unshift({id:uid(),done:false,...d});
+    // Optimistic add with temp ID
+    const tempId='tmp_'+uid();
+    const newTask={id:tempId,done:false,...d};
+    tasks.unshift(newTask); saveLocal(); closeMod(); render();
+    if(dvDate) renderDayView();
     snack('Task added!');
+    // Create in Airtable, replace temp ID
+    if(hasCfg()){
+      const created=await sf(()=>apiCreate(d));
+      if(created){
+        const idx=tasks.findIndex(t=>t.id===tempId);
+        if(idx!==-1){ tasks[idx].id=created.id; saveLocal(); }
+      }
+    }
   }
-  save(); closeMod(); render();
-  if(dvDate) renderDayView();
-  if(detId) renderDet(detId);
 }
 
-// ── Detail Panel ─────────────────────────────────────
+// ── Detail Panel ───────────────────────────────────────
 function openDet(id){
   const t=tasks.find(x=>x.id===id); if(!t) return;
   detId=id; renderDet(id);
@@ -792,42 +1094,47 @@ function renderDet(id){
     <button class="btn bfw bbl" onclick="expOne('${id}')">📅 Add to Calendar (.ics)</button>
     <button class="btn bfw brd" onclick="delTask('${id}')">🗑 Delete Task</button>`;
 }
-function saveNotes(id){
+async function saveNotes(id){
   const t=tasks.find(x=>x.id===id); if(!t) return;
   const el=document.getElementById('detNot'); if(!el) return;
-  t.notes=el.value.trim(); save();
+  t.notes=el.value.trim(); saveLocal();
+  if(hasCfg()&&!id.startsWith('tmp_')) await sf(()=>apiPatch(id,{notes:t.notes}));
 }
 function closeDet(){ document.getElementById('det').classList.remove('open'); detId=null }
-function togDone(id){
+async function togDone(id){
   const t=tasks.find(x=>x.id===id); if(!t) return;
-  t.done=!t.done; save(); render();
+  t.done=!t.done; saveLocal(); render();
   if(detId===id) renderDet(id);
   if(dvDate) renderDayView();
   snack(t.done?'Task completed!':'Task reopened');
+  if(hasCfg()&&!id.startsWith('tmp_')) await sf(()=>apiPatch(id,{done:t.done}));
 }
-function delTask(id){
+async function delTask(id){
   if(!confirm('Delete this task?')) return;
-  tasks=tasks.filter(t=>t.id!==id);
-  save(); render(); closeDet(); snack('Task deleted');
+  tasks=tasks.filter(t=>t.id!==id); saveLocal(); render(); closeDet(); snack('Task deleted');
+  if(hasCfg()&&!id.startsWith('tmp_')) await sf(()=>apiDel(id));
 }
-function qdel(id){
-  tasks=tasks.filter(t=>t.id!==id);
-  save(); render(); snack('Task deleted');
+async function qdel(id){
+  tasks=tasks.filter(t=>t.id!==id); saveLocal(); render(); snack('Task deleted');
+  if(hasCfg()&&!id.startsWith('tmp_')) await sf(()=>apiDel(id));
 }
 
-// ── Drag & Drop ──────────────────────────────────────
+// ── Drag & Drop ────────────────────────────────────────
 function dstart(e,id){ dragId=id; e.dataTransfer.effectAllowed='move' }
 function dov(e){ e.preventDefault(); e.currentTarget.classList.add('dov') }
 function dlv(e){ e.currentTarget.classList.remove('dov') }
-function drop(e,ds){
+async function drop(e,ds){
   e.preventDefault(); e.currentTarget.classList.remove('dov');
   if(!dragId) return;
   const t=tasks.find(x=>x.id===dragId);
-  if(t){ t.date=ds; save(); render(); snack('Task moved') }
+  if(t){
+    t.date=ds; saveLocal(); render(); snack('Task moved');
+    if(hasCfg()&&!dragId.startsWith('tmp_')) await sf(()=>apiPatch(dragId,{date:ds}));
+  }
   dragId=null;
 }
 
-// ── iCal ────────────────────────────────────────────
+// ── iCal ───────────────────────────────────────────────
 function expOne(id){
   const t=tasks.find(x=>x.id===id); if(!t) return;
   const now=new Date().toISOString().replace(/[-:.]/g,'').slice(0,15)+'Z';
@@ -849,17 +1156,17 @@ function expOne(id){
 }
 function ie(s){ return String(s).replace(/\\/g,'\\\\').replace(/;/g,'\\;').replace(/,/g,'\\,').replace(/\n/g,'\\n') }
 
-// ── Snack ────────────────────────────────────────────
+// ── Snack ──────────────────────────────────────────────
 let snkT;
 function snack(msg){
   const el=document.getElementById('snk');
   el.textContent=msg; el.classList.add('on');
-  clearTimeout(snkT); snkT=setTimeout(()=>el.classList.remove('on'),2200);
+  clearTimeout(snkT); snkT=setTimeout(()=>el.classList.remove('on'),2400);
 }
 
-// ── Keyboard ────────────────────────────────────────
+// ── Keyboard ───────────────────────────────────────────
 document.addEventListener('keydown',e=>{
-  if(e.key==='Escape'){ closeMod(); closeDet(); closeDayView() }
+  if(e.key==='Escape'){ closeMod(); closeDet(); closeDayView(); closeSetup() }
   if(e.key==='Enter'&&document.getElementById('back').classList.contains('on')){
     if(document.activeElement.tagName!=='TEXTAREA'&&document.activeElement.tagName!=='SELECT') saveTask();
   }
